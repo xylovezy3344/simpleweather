@@ -2,6 +2,7 @@ package com.xiaoyu.simpleweather.util;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.xiaoyu.simpleweather.MyApplication;
 import com.xiaoyu.simpleweather.db.City;
 import com.xiaoyu.simpleweather.db.CityDao;
@@ -9,6 +10,7 @@ import com.xiaoyu.simpleweather.db.County;
 import com.xiaoyu.simpleweather.db.CountyDao;
 import com.xiaoyu.simpleweather.db.Province;
 import com.xiaoyu.simpleweather.db.ProvinceDao;
+import com.xiaoyu.simpleweather.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,6 +92,21 @@ public class Utility {
             }
         }
         return false;
+    }
 
+    /**
+     * 将返回灯JSON数据解析成Weather实体类
+     */
+    public static Weather handleWeatherResponse(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent, Weather.class);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

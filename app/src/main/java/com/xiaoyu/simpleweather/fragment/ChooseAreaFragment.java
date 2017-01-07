@@ -1,6 +1,7 @@
 package com.xiaoyu.simpleweather.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.xiaoyu.simpleweather.MyApplication;
 import com.xiaoyu.simpleweather.R;
+import com.xiaoyu.simpleweather.activity.WeatherActivity;
 import com.xiaoyu.simpleweather.db.City;
 import com.xiaoyu.simpleweather.db.CityDao;
 import com.xiaoyu.simpleweather.db.County;
@@ -107,6 +109,7 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 } else if (currentLevel == LEVEL_COUNTY) {
                     selectedCounty = countyList.get(position);
+                    jumpToWeatherAct();
                 }
             }
         });
@@ -121,6 +124,16 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
         });
+    }
+
+    /**
+     * 跳转到天气信息页面
+     */
+    private void jumpToWeatherAct() {
+        Intent intent = new Intent(getContext(), WeatherActivity.class);
+        intent.putExtra("weather_id", selectedCounty.getWeatherId());
+        startActivity(intent);
+        getActivity().finish();
     }
 
     /**
