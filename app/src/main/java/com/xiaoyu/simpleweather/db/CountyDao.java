@@ -13,7 +13,7 @@ import org.greenrobot.greendao.database.DatabaseStatement;
 /** 
  * DAO for table "COUNTY".
 */
-public class CountyDao extends AbstractDao<County, Integer> {
+public class CountyDao extends AbstractDao<County, Long> {
 
     public static final String TABLENAME = "COUNTY";
 
@@ -22,10 +22,10 @@ public class CountyDao extends AbstractDao<County, Integer> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, int.class, "id", true, "ID");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property CountyName = new Property(1, String.class, "countyName", false, "COUNTY_NAME");
         public final static Property WeatherId = new Property(2, String.class, "weatherId", false, "WEATHER_ID");
-        public final static Property CityId = new Property(3, int.class, "cityId", false, "CITY_ID");
+        public final static Property CityId = new Property(3, Long.class, "cityId", false, "CITY_ID");
     }
 
 
@@ -41,10 +41,10 @@ public class CountyDao extends AbstractDao<County, Integer> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"COUNTY\" (" + //
-                "\"ID\" INTEGER PRIMARY KEY NOT NULL ," + // 0: id
+                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"COUNTY_NAME\" TEXT," + // 1: countyName
                 "\"WEATHER_ID\" TEXT," + // 2: weatherId
-                "\"CITY_ID\" INTEGER NOT NULL );"); // 3: cityId
+                "\"CITY_ID\" INTEGER);"); // 3: cityId
     }
 
     /** Drops the underlying database table. */
@@ -56,7 +56,11 @@ public class CountyDao extends AbstractDao<County, Integer> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, County entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
  
         String countyName = entity.getCountyName();
         if (countyName != null) {
@@ -67,13 +71,21 @@ public class CountyDao extends AbstractDao<County, Integer> {
         if (weatherId != null) {
             stmt.bindString(3, weatherId);
         }
-        stmt.bindLong(4, entity.getCityId());
+ 
+        Long cityId = entity.getCityId();
+        if (cityId != null) {
+            stmt.bindLong(4, cityId);
+        }
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, County entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
+ 
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
  
         String countyName = entity.getCountyName();
         if (countyName != null) {
@@ -84,40 +96,45 @@ public class CountyDao extends AbstractDao<County, Integer> {
         if (weatherId != null) {
             stmt.bindString(3, weatherId);
         }
-        stmt.bindLong(4, entity.getCityId());
+ 
+        Long cityId = entity.getCityId();
+        if (cityId != null) {
+            stmt.bindLong(4, cityId);
+        }
     }
 
     @Override
-    public Integer readKey(Cursor cursor, int offset) {
-        return cursor.getInt(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public County readEntity(Cursor cursor, int offset) {
         County entity = new County( //
-            cursor.getInt(offset + 0), // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // countyName
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // weatherId
-            cursor.getInt(offset + 3) // cityId
+            cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3) // cityId
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, County entity, int offset) {
-        entity.setId(cursor.getInt(offset + 0));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setCountyName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setWeatherId(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setCityId(cursor.getInt(offset + 3));
+        entity.setCityId(cursor.isNull(offset + 3) ? null : cursor.getLong(offset + 3));
      }
     
     @Override
-    protected final Integer updateKeyAfterInsert(County entity, long rowId) {
-        return entity.getId();
+    protected final Long updateKeyAfterInsert(County entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public Integer getKey(County entity) {
+    public Long getKey(County entity) {
         if(entity != null) {
             return entity.getId();
         } else {
@@ -127,7 +144,7 @@ public class CountyDao extends AbstractDao<County, Integer> {
 
     @Override
     public boolean hasKey(County entity) {
-        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+        return entity.getId() != null;
     }
 
     @Override

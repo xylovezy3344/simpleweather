@@ -11,6 +11,7 @@ public class MyApplication extends Application {
 
     private static final String TAG = "MyApplication";
 
+    private static MyApplication instance;
     private static Context context;
     private SQLiteDatabase db;
     private DaoSession mDaoSession;
@@ -18,8 +19,13 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         context = getApplicationContext();
         setDatabase();
+    }
+
+    public static MyApplication getInstance() {
+        return instance;
     }
 
     public static Context getContext() {
