@@ -71,6 +71,7 @@ public class WeatherActivity extends BaseActivity {
     Button navButton;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+    private String weatherId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class WeatherActivity extends BaseActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather", null);
-        final String weatherId;
+
         if (weatherString != null) {
             Weather weather = Utility.handleWeatherResponse(weatherString);
             weatherId = weather.basic.weatherId;
@@ -248,7 +249,8 @@ public class WeatherActivity extends BaseActivity {
     /**
      * 重新选择城市后刷新界面
      */
-    public void reLoadWeather(String weatherId) {
+    public void reLoadWeather(String newWeatherId) {
+        weatherId = newWeatherId;
         drawerLayout.closeDrawers();
         swipeRefreshLayout.setRefreshing(true);
         requestWeather(weatherId);
