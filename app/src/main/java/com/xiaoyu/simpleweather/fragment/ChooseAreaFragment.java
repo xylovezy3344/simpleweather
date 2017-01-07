@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.xiaoyu.simpleweather.MyApplication;
 import com.xiaoyu.simpleweather.R;
+import com.xiaoyu.simpleweather.activity.MainActivity;
 import com.xiaoyu.simpleweather.activity.WeatherActivity;
 import com.xiaoyu.simpleweather.db.City;
 import com.xiaoyu.simpleweather.db.CityDao;
@@ -109,7 +110,12 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 } else if (currentLevel == LEVEL_COUNTY) {
                     selectedCounty = countyList.get(position);
-                    jumpToWeatherAct();
+                    if (getActivity() instanceof MainActivity) {
+                        jumpToWeatherAct();
+                    } else if (getActivity() instanceof WeatherActivity) {
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.reLoadWeather(selectedCounty.getWeatherId());
+                    }
                 }
             }
         });
