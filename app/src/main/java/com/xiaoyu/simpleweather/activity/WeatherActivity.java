@@ -1,5 +1,6 @@
 package com.xiaoyu.simpleweather.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -21,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.xiaoyu.simpleweather.R;
 import com.xiaoyu.simpleweather.gson.Forecast;
 import com.xiaoyu.simpleweather.gson.Weather;
+import com.xiaoyu.simpleweather.service.AutoUpdateService;
 import com.xiaoyu.simpleweather.util.HttpUtil;
 import com.xiaoyu.simpleweather.util.Utility;
 
@@ -238,6 +240,9 @@ public class WeatherActivity extends BaseActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 
     /**
